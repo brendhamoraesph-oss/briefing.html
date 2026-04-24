@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Briefing — Identidade Visual</title>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0a0a0a;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    .card {
+      background: #0e0e0e;
+      border: 0.5px solid #2a2a2a;
+      border-radius: 16px;
+      padding: 2.5rem 2rem;
+      width: 100%;
+      max-width: 560px;
+      color: #e8e8e8;
+    }
+
+    .header { margin-bottom: 2rem; }
+    .header h1 { font-size: 20px; font-weight: 500; color: #f0f0f0; letter-spacing: -0.3px; }
+    .header p { font-size: 13px; color: #555; margin-top: 4px; }
+
+    .divider { height: 0.5px; background: #1f1f1f; margin: 1.5rem 0; }
+
+    .field { margin-bottom: 1.25rem; }
+
+    label {
+      display: block;
+      font-size: 11px;
+      font-weight: 500;
+      color: #666;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    input[type="text"], textarea {
+      width: 100%;
+      background: #161616;
+      border: 0.5px solid #2a2a2a;
+      border-radius: 8px;
+      color: #e8e8e8;
+      font-size: 14px;
+      padding: 10px 14px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus, textarea:focus { border-color: #3a3a3a; }
+    input::placeholder, textarea::placeholder { color: #3a3a3a; }
+
+    textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+
+    .btn {
+      width: 100%;
+      margin-top: 1.5rem;
+      padding: 12px;
+      background: #f0f0f0;
+      color: #0e0e0e;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .btn:hover { background: #ffffff; }
+    .btn:active { transform: scale(0.98); }
+    .btn:disabled { background: #222; color: #555; cursor: not-allowed; }
+
+    .toast {
+      margin-top: 1rem;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      text-align: center;
+      display: none;
+    }
+    .toast.success { background: #0d2b1a; color: #4ade80; border: 0.5px solid #1a4a2e; display: block; }
+    .toast.error   { background: #2b0d0d; color: #f87171; border: 0.5px solid #4a1a1a; display: block; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="header">
+      <h1>Briefing — Identidade Visual</h1>
+      <p>Preencha com cuidado. As respostas serão enviadas por e-mail.</p>
+    </div>
+
+    <div class="field">
+      <label>Nome / Empresa do cliente</label>
+      <input type="text" id="nome" placeholder="Ex: Studio Mara / Fernanda Lima ME" />
+    </div>
+
+    <div class="field">
+      <label>Segmento / nicho de atuação</label>
+      <input type="text" id="segmento" placeholder="Ex: Moda feminina, Consultoria jurídica..." />
+    </div>
+
+    <div class="field">
+      <label>Público-alvo</label>
+      <textarea id="publico" placeholder="Descreva quem é o público: idade, perfil, comportamento..."></textarea>
+    </div>
+
+    <div class="field">
+      <label>Personalidade da marca (adjetivos)</label>
+      <input type="text" id="personalidade" placeholder="Ex: Sofisticada, minimalista, acolhedora, ousada..." />
+    </div>
+
+    <div class="field">
+      <label>Referências visuais (marcas que admira)</label>
+      <textarea id="referencias" placeholder="Cite marcas, sites ou perfis que te inspiram visualmente..."></textarea>
+    </div>
+
+    <div class="field">
+      <label>Cores preferidas ou a evitar</label>
+      <input type="text" id="cores" placeholder="Ex: Gosta de tons terrosos, quer evitar amarelo..." />
+    </div>
+
+    <div class="field">
+      <label>Concorrentes</label>
+      <input type="text" id="concorrentes" placeholder="Ex: Studio X, Agência Y, @perfil_z" />
+    </div>
+
+    <div class="field">
+      <label>Onde a marca será aplicada</label>
+      <input type="text" id="aplicacao" placeholder="Ex: Instagram, cartão de visita, embalagem, site..." />
+    </div>
+
+    <div class="field">
+      <label>Observações adicionais</label>
+      <textarea id="obs" placeholder="Algo mais que seja importante saber?"></textarea>
+    </div>
+
+    <div class="divider"></div>
+
+    <button class="btn" id="btn" onclick="enviar()">Enviar briefing</button>
+    <div class="toast" id="toast"></div>
+  </div>
+
+  <script>
+    emailjs.init('A-zimSheBL1BYFMBI');
+
+    async function enviar() {
+      const btn = document.getElementById('btn');
+      const toast = document.getElementById('toast');
+      toast.className = 'toast';
+
+      const campos = {
+        nome:          document.getElementById('nome').value.trim(),
+        segmento:      document.getElementById('segmento').value.trim(),
+        publico:       document.getElementById('publico').value.trim(),
+        personalidade: document.getElementById('personalidade').value.trim(),
+        referencias:   document.getElementById('referencias').value.trim(),
+        cores:         document.getElementById('cores').value.trim(),
+        concorrentes:  document.getElementById('concorrentes').value.trim(),
+        aplicacao:     document.getElementById('aplicacao').value.trim(),
+        obs:           document.getElementById('obs').value.trim(),
+      };
+
+      if (!campos.nome || !campos.segmento || !campos.publico || !campos.personalidade) {
+        toast.textContent = 'Preencha todos os campos obrigatórios antes de enviar.';
+        toast.className = 'toast error';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Enviando...';
+
+      try {
+        await emailjs.send('service_cyy8h5e', 'template_xz2yp2c', campos);
+        toast.textContent = 'Briefing enviado com sucesso! Obrigado.';
+        toast.className = 'toast success';
+        document.querySelectorAll('input, textarea').forEach(el => el.value = '');
+      } catch (e) {
+        toast.textContent = 'Erro ao enviar. Tente novamente em instantes.';
+        toast.className = 'toast error';
+      }
+
+      btn.disabled = false;
+      btn.textContent = 'Enviar briefing';
+    }
+  </script>
+</body>
+</html>
